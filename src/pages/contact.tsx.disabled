@@ -1,0 +1,77 @@
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { Mail, MapPin, Phone } from "lucide-react";
+import { QuoteForm } from "@/components/site/QuoteForm";
+import { SiteShell, Meta, PageIntro } from "@/components/site/SiteShell";
+import { company } from "@/lib/site";
+import { images } from "@/lib/images";
+
+export default function Contact() {
+  const router = useRouter();
+  const product = router.query.product as string | undefined;
+  const station = images.stationEvening;
+  return (
+    <SiteShell>
+      <Head>
+        <title>{Meta.contact.title}</title>
+        <meta name="description" content={Meta.contact.description} />
+        <meta property="og:title" content={Meta.contact.title} />
+        <meta property="og:description" content={Meta.contact.description} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
+      <PageIntro
+        eyebrow="Contact & quote"
+        title="Let&apos;s plan your next delivery."
+        text="Tell us the product, quantity and destination. Your estimate downloads immediately; our team will confirm current availability and delivery terms."
+        image={station}
+        imageAlt="Supreme Energy station at dusk"
+      />
+      <section className="mx-auto grid max-w-[1440px] gap-12 px-5 py-16 lg:grid-cols-[.7fr_1.3fr] lg:px-10 lg:py-24">
+        <aside>
+          <p className="eyebrow text-accent">Talk to our team</p>
+          <h2 className="mt-4 font-display text-5xl text-primary">
+            Fast answers. Clear next steps.
+          </h2>
+          <div className="mt-8 grid gap-5">
+            <a
+              href={`tel:${company.phoneHref}`}
+              className="flex gap-4 border-b border-border pb-5"
+            >
+              <Phone className="text-accent" />
+              <span>
+                <small className="block text-muted-foreground">
+                  Phone & WhatsApp
+                </small>
+                <strong>{company.phone}</strong>
+              </span>
+            </a>
+            <a
+              href={`mailto:${company.email}`}
+              className="flex gap-4 border-b border-border pb-5"
+            >
+              <Mail className="text-accent" />
+              <span>
+                <small className="block text-muted-foreground">Email</small>
+                <strong className="break-all">{company.email}</strong>
+              </span>
+            </a>
+            <div className="flex gap-4">
+              <MapPin className="shrink-0 text-accent" />
+              <span>
+                <small className="block text-muted-foreground">Head office</small>
+                <strong className="leading-6">{company.address}</strong>
+              </span>
+            </div>
+          </div>
+          <div className="mt-10 border-l-4 border-accent bg-secondary p-5 text-sm leading-6 text-muted-foreground">
+            Email delivery is activated after Supreme Energy&apos;s sender
+            domain is verified. Until then, the form securely prepares a
+            professional downloadable estimate for direct follow-up.
+          </div>
+        </aside>
+        <QuoteForm initialProduct={product} />
+      </section>
+    </SiteShell>
+  );
+}
