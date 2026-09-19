@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowUpRight, Droplets, ThermometerSun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/data/products";
-import { company } from "@/lib/site";
 
 export function ProductCard({
   product,
@@ -54,11 +53,7 @@ export function ProductCard({
       )}
       {!hideQuoteButton && (
         <Button asChild variant="outline" className="mt-6 w-full">
-          <a
-            href={`mailto:${company.email}?subject=${encodeURIComponent(`${product.shortName} quote request`)}&body=${encodeURIComponent(`Product: ${product.name} (${product.shortName})\nQuantity: \nDelivery location: \n\n`)}`}
-          >
-            Request quote
-          </a>
+          <Link href={`/quote?product=${product.id}`}>Request quote</Link>
         </Button>
       )}
     </article>

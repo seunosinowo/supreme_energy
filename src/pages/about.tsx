@@ -14,7 +14,7 @@ const values = [
 ];
 
 export default function About() {
-  const team = images.leadership;
+  const heroImg = images.stationDay;
   return (
     <SiteShell>
       <Head>
@@ -29,8 +29,8 @@ export default function About() {
         eyebrow={`Company profile · RC ${company.rc}`}
         title="A dependable partner in energy."
         text="Supreme Energy is a Nigerian petroleum products, engineering and logistics company built around responsible execution and long-term client confidence."
-        image={team}
-        imageAlt="Supreme Energy management and operations team"
+        image={heroImg}
+        imageAlt="Supreme Energy station operations"
       />
       <section className="mx-auto grid max-w-[1440px] gap-14 px-5 py-20 lg:grid-cols-2 lg:px-10 lg:py-28">
         <div>
@@ -46,8 +46,8 @@ export default function About() {
           </p>
         </div>
         <img
-          src={team}
-          alt="Supreme Energy management and operations team"
+          src={images.operationsGrid}
+          alt="Supreme Energy operations and capabilities"
           loading="lazy"
           className="h-full min-h-[430px] w-full object-cover"
         />
@@ -67,27 +67,6 @@ export default function About() {
             ))}
           </div>
         </div>
-      </section>
-      <section className="mx-auto max-w-[1440px] px-5 py-20 lg:px-10">
-        <div className="grid gap-8 md:grid-cols-2">
-          <div className="border-l-4 border-accent pl-6">
-            <p className="eyebrow text-muted-foreground">Managing Director</p>
-            <h2 className="mt-2 font-display text-4xl text-primary">
-              Stanley Omeye
-            </h2>
-          </div>
-          <div className="border-l-4 border-accent pl-6">
-            <p className="eyebrow text-muted-foreground">Operational Manager</p>
-            <h2 className="mt-2 font-display text-4xl text-primary">
-              Miss Nwaoye Obioma
-            </h2>
-          </div>
-        </div>
-        <p className="mt-12 max-w-3xl leading-7 text-muted-foreground">
-          The organization is structured to coordinate leadership, operations,
-          technical delivery, procurement, finance, QA/QC and HSE
-          responsibilities around each client assignment.
-        </p>
       </section>
     </SiteShell>
   );

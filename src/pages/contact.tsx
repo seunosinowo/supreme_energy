@@ -23,7 +23,7 @@ export default function Contact() {
       <PageIntro
         eyebrow="Contact & quote"
         title="Let&apos;s plan your next delivery."
-        text="Tell us the product, quantity and destination. Your estimate downloads immediately; our team will confirm current availability and delivery terms."
+        text="Tell us the product, quantity and destination. Submit the form and it goes straight to our team — your estimate also downloads for your records."
         image={station}
         imageAlt="Supreme Energy station at dusk"
       />
@@ -65,9 +65,9 @@ export default function Contact() {
             </div>
           </div>
           <div className="mt-10 border-l-4 border-accent bg-secondary p-5 text-sm leading-6 text-muted-foreground">
-            Email delivery is activated after Supreme Energy&apos;s sender
-            domain is verified. Until then, the form securely prepares a
-            professional downloadable estimate for direct follow-up.
+            Email delivery is activated once the backend API is connected. Until then,
+            the form still prepares a professional downloadable estimate and queues
+            the request locally for immediate follow-up.
           </div>
         </aside>
         <QuoteForm initialProduct={product} />

@@ -7,11 +7,11 @@ import { company } from "@/lib/site";
 
 const nav = [
   ["/products", "Products"],
-  // ["/services", "Services"],
-  // ["/about", "About"],
-  // ["/projects", "Projects"],
-  // ["/fleet", "Fleet"],
-  // ["/contact", "Contact"],
+  ["/services", "Services"],
+  ["/about", "About"],
+  ["/projects", "Projects"],
+  ["/fleet", "Fleet"],
+  ["/contact", "Contact"],
 ] as const;
 
 export function SiteShell({ children }: { children: ReactNode }) {
@@ -50,9 +50,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </nav>
           <div className="hidden lg:block">
             <Button asChild variant="flame">
-              <a href={`mailto:${company.email}?subject=${encodeURIComponent("Request a quote")}`}>
+              <Link href="/quote">
                 Get instant quote <ArrowRight />
-              </a>
+              </Link>
             </Button>
           </div>
           <Button
@@ -139,15 +139,14 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="border-t border-primary-foreground/15 px-5 py-5 text-center text-xs text-primary-foreground/60">
-          © 2026 Supreme Energy · RC {company.rc} · {company.tagline}
-          {/* ·{" "}
+          © 2026 Supreme Energy · RC {company.rc} · {company.tagline} ·{" "}
           <Link href="/privacy" className="hover:text-primary-foreground">
             Privacy
           </Link>{" "}
           ·{" "}
           <Link href="/terms" className="hover:text-primary-foreground">
             Terms
-          </Link> */}
+          </Link>
         </div>
       </footer>
       <a
@@ -261,5 +260,10 @@ export const Meta = {
     title: "Terms of Use | Supreme Energy",
     description:
       "Terms governing Supreme Energy website prices, quotes and information.",
+  },
+  quote: {
+    title: "Instant Petroleum Quote | Supreme Energy",
+    description:
+      "Build and download a branded Supreme Energy estimate — petroleum products, quantities, destination and live pricing.",
   },
 };

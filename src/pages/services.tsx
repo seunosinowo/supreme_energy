@@ -65,7 +65,7 @@ export default function Services() {
               execution.
             </p>
             <Button asChild variant="flame" className="mt-8">
-              <Link href="/contact">
+              <Link href="/quote">
                 Discuss your project <ArrowRight />
               </Link>
             </Button>

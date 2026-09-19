@@ -193,3 +193,32 @@ URLs with your own hosted images (CDN, S3, or anything reachable over
 
 ---
 
+## SEO
+
+Every page sets `<title>` + `description` + Open Graph tags via `next/head`:
+see the `Meta` export in
+[SiteShell.tsx](src/components/site/SiteShell.tsx).
+
+The homepage additionally injects a JSON-LD `Organization` schema block for
+search engines.
+
+---
+
+## Deployment
+
+The project is a standard Next.js app — deploy it anywhere that runs Node:
+
+- **Vercel** (recommended): `vercel deploy` — zero config for Pages Router.
+- **Self-hosted / any Node host**: `npm run build && npm start`.
+- **Docker / container**: build with a standard `node:20-alpine` image.
+
+---
+
+## License & Contact
+
+Company website — © Supreme Energy.
+
+- Head office: 45, Imam Dauda Street, Off Eric Moore Road, Surulere, Lagos
+- Phone / WhatsApp: +234 902 487 6164
+- E-mail: info@supreme-energy.com.ng
+- RC: 7982142

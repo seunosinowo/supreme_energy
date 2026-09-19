@@ -6,4 +6,5 @@ export const images = {
   operationsGrid: "/operations-grid.jpeg",
   leadership: "/leadership.jpeg",
   stationDay: "/station-day.jpeg",
+  g8g: "/g8g.jpeg",
 };
