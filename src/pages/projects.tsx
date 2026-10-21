@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Head from "next/head";
 import { Building2, CheckCircle2 } from "lucide-react";
 import { SiteShell, Meta, PageIntro } from "@/components/site/SiteShell";
@@ -47,17 +48,17 @@ export default function Projects() {
           <p className="eyebrow text-accent">Project experience</p>
           <div className="mt-7 grid gap-3">
             {work.map((x) => (
-              <div
-                key={x}
-                className="flex items-center gap-3 border-b border-border py-4"
-              >
+              <div key={x} className="flex items-center gap-3 border-b border-border py-4">
                 <CheckCircle2 className="size-5 text-accent" />
                 <span className="font-semibold">{x}</span>
               </div>
             ))}
           </div>
         </div>
-        <img
+        <Image
+          width={1600}
+          height={1000}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           src={industry}
           alt="Supreme Energy retail and petroleum operations"
           loading="lazy"
@@ -72,19 +73,15 @@ export default function Projects() {
           </h2>
           <div className="mt-10 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
             {names.map((n) => (
-              <div
-                key={n}
-                className="flex min-h-28 items-center gap-4 bg-background p-6"
-              >
+              <div key={n} className="flex min-h-28 items-center gap-4 bg-background p-6">
                 <Building2 className="text-accent" />
                 <span className="font-display text-2xl text-primary">{n}</span>
               </div>
             ))}
           </div>
           <p className="mt-6 text-xs leading-5 text-muted-foreground">
-            Company names are presented as profile references; they do not
-            imply endorsement. Detailed scopes and references are available
-            during commercial discussions.
+            Company names are presented as profile references; they do not imply endorsement.
+            Detailed scopes and references are available during commercial discussions.
           </p>
         </div>
       </section>

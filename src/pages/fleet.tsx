@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
 import { ArrowRight, Gauge, MapPinned, Ship, Truck } from "lucide-react";
@@ -44,7 +45,10 @@ export default function Fleet() {
         imageAlt="Supreme Energy tanker convoy on the road"
       />
       <section className="grid bg-primary text-primary-foreground lg:grid-cols-2">
-        <img
+        <Image
+          width={1600}
+          height={1000}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           src={gantry}
           alt="Supreme Energy tanker loading at the gantry"
           className="h-full min-h-[520px] w-full object-cover"
@@ -56,22 +60,14 @@ export default function Fleet() {
               Mobile dispensing, without the guesswork.
             </h2>
             <p className="mt-6 leading-7 text-primary-foreground/70">
-              A meter-equipped smaller truck dispenses fuel like a station
-              pump. Supply can be allocated across multiple delivery points on
-              one planned route.
+              A meter-equipped smaller truck dispenses fuel like a station pump. Supply can be
+              allocated across multiple delivery points on one planned route.
             </p>
             <div className="mt-8 grid grid-cols-3 gap-3">
               {["5,000 L", "10,000 L", "15,000 L"].map((x, i) => (
-                <div
-                  key={x}
-                  className="border border-primary-foreground/20 p-4"
-                >
-                  <span className="eyebrow text-accent">
-                    Point {String.fromCharCode(65 + i)}
-                  </span>
-                  <strong className="mt-2 block font-display text-2xl">
-                    {x}
-                  </strong>
+                <div key={x} className="border border-primary-foreground/20 p-4">
+                  <span className="eyebrow text-accent">Point {String.fromCharCode(65 + i)}</span>
+                  <strong className="mt-2 block font-display text-2xl">{x}</strong>
                 </div>
               ))}
             </div>
@@ -86,21 +82,17 @@ export default function Fleet() {
       <section className="mx-auto max-w-[1440px] px-5 py-20 lg:px-10">
         <div className="grid gap-5 md:grid-cols-3">
           {fleetCapabilities.map(({ icon: Icon, title, text }) => (
-            <article
-              key={title}
-              className="border border-border p-7"
-            >
+            <article key={title} className="border border-border p-7">
               <Icon className="text-accent" />
-              <h2 className="mt-8 font-display text-3xl text-primary">
-                {title}
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                {text}
-              </p>
+              <h2 className="mt-8 font-display text-3xl text-primary">{title}</h2>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">{text}</p>
             </article>
           ))}
         </div>
-        <img
+        <Image
+          width={1600}
+          height={1000}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           src={fleet}
           alt="Supreme Energy tanker convoy"
           loading="lazy"

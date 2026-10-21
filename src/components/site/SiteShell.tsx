@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -28,7 +29,13 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-50 border-b border-border/70 bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-5 lg:px-10">
           <Link href="/" className="flex items-center gap-3" aria-label="Supreme Energy home">
-            <img src="/favicon.png" alt="" className="size-11 shrink-0 object-contain" />
+            <Image
+              width={56}
+              height={56}
+              src="/favicon.png"
+              alt=""
+              className="size-11 shrink-0 object-contain"
+            />
             <span className="font-display text-xl uppercase leading-none text-primary sm:text-2xl">
               Supreme Energy
             </span>
@@ -89,7 +96,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
               className="inline-flex items-center gap-3"
               aria-label="Supreme Energy home"
             >
-              <img
+              <Image
+                width={56}
+                height={56}
                 src="/favicon.png"
                 alt=""
                 className="size-14 shrink-0 object-contain"
@@ -99,8 +108,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </span>
             </Link>
             <p className="mt-5 max-w-md text-sm leading-7 text-primary-foreground/70">
-              Reliable petroleum products, metered delivery, engineering and logistics
-              support—built around safety, transparency and client satisfaction.
+              Reliable petroleum products, metered delivery, engineering and logistics support—built
+              around safety, transparency and client satisfaction.
             </p>
           </div>
           <div>
@@ -119,20 +128,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </div>
           <div>
             <p className="eyebrow text-accent">Head office</p>
-            <p className="mt-4 text-sm leading-6 text-primary-foreground/75">
-              {company.address}
-            </p>
-            <a
-              className="mt-4 flex items-center gap-2 text-sm"
-              href={`tel:${company.phoneHref}`}
-            >
+            <p className="mt-4 text-sm leading-6 text-primary-foreground/75">{company.address}</p>
+            <a className="mt-4 flex items-center gap-2 text-sm" href={`tel:${company.phoneHref}`}>
               <Phone className="size-4 text-accent" />
               {company.phone}
             </a>
-            <a
-              className="mt-2 flex items-center gap-2 text-sm"
-              href={`mailto:${company.email}`}
-            >
+            <a className="mt-2 flex items-center gap-2 text-sm" href={`mailto:${company.email}`}>
               <Mail className="size-4 text-accent" />
               {company.email}
             </a>
@@ -196,7 +197,10 @@ export function PageIntro({
     );
   return (
     <section className="relative overflow-hidden bg-primary text-primary-foreground">
-      <img
+      <Image
+        width={1600}
+        height={1000}
+        sizes="(max-width: 1024px) 100vw, 50vw"
         src={image}
         alt={imageAlt ?? ""}
         className="image-breathe absolute inset-0 size-full object-cover"
@@ -258,8 +262,7 @@ export const Meta = {
   },
   terms: {
     title: "Terms of Use | Supreme Energy",
-    description:
-      "Terms governing Supreme Energy website prices, quotes and information.",
+    description: "Terms governing Supreme Energy website prices, quotes and information.",
   },
   quote: {
     title: "Instant Petroleum Quote | Supreme Energy",

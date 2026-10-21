@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Head from "next/head";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteShell, Meta, PageIntro } from "@/components/site/SiteShell";
@@ -26,8 +27,8 @@ export default function Products() {
       <section className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-24">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground">
-            Indicative prices in Nigerian Naira. Final quote depends on
-            quantity, availability and destination.
+            Indicative prices in Nigerian Naira. Final quote depends on quantity, availability and
+            destination.
           </p>
           <p className="eyebrow text-primary">Last updated {PRICE_LAST_UPDATED}</p>
         </div>
@@ -38,7 +39,10 @@ export default function Products() {
         </div>
       </section>
       <section className="grid bg-primary text-primary-foreground lg:grid-cols-2">
-        <img
+        <Image
+          width={1600}
+          height={1000}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           src={productsImage}
           alt="Supreme Energy LPG operations"
           loading="lazy"
@@ -51,10 +55,9 @@ export default function Products() {
               Specifications that travel with the product.
             </h2>
             <p className="mt-6 leading-7 text-primary-foreground/70">
-              Density and flash-point ranges are reference specifications.
-              Every commercial offer remains subject to current supply
-              documentation, applicable standards and agreed handling
-              conditions.
+              Density and flash-point ranges are reference specifications. Every commercial offer
+              remains subject to current supply documentation, applicable standards and agreed
+              handling conditions.
             </p>
           </div>
         </div>

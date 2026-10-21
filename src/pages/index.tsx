@@ -1,7 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, Gauge, MapPin, ShieldCheck, Truck } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Gauge,
+  MapPin,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteShell, Meta } from "@/components/site/SiteShell";
@@ -99,7 +108,10 @@ export default function Home() {
               aria-label={`Slide ${i + 1} of ${total}`}
               aria-hidden={i !== slide}
             >
-              <img
+              <Image
+                width={1600}
+                height={1000}
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 src={s.src}
                 alt={s.alt}
                 className={`absolute inset-0 size-full object-cover ${
@@ -126,25 +138,25 @@ export default function Home() {
               aria-hidden={i !== slide}
             >
               <div className="w-full">
-              <h1 className="w-full max-w-4xl font-display text-5xl leading-[.96] sm:text-center sm:text-6xl lg:text-left lg:text-8xl">
-                {s.title.map((line, li) => (
-                  <span key={li} className="block">
-                    {line}
-                  </span>
-                ))}
-              </h1>
-              <div className="mt-7 w-full max-w-2xl flex flex-col items-start gap-6 border-t border-primary-foreground/30 pt-6 sm:items-center sm:text-center lg:items-start lg:text-left">
-                <p className="w-full text-base leading-7 text-primary-foreground/70 lg:text-lg">
-                  {s.text}
-                </p>
-                <div className="flex w-full flex-wrap gap-3 sm:justify-center lg:justify-start">
-                  <Button asChild size="lg" variant="flame">
-                    <Link href={s.cta.href}>
-                      {s.cta.label} <ArrowRight />
-                    </Link>
-                  </Button>
+                <h1 className="w-full max-w-4xl font-display text-5xl leading-[.96] sm:text-center sm:text-6xl lg:text-left lg:text-8xl">
+                  {s.title.map((line, li) => (
+                    <span key={li} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </h1>
+                <div className="mt-7 w-full max-w-2xl flex flex-col items-start gap-6 border-t border-primary-foreground/30 pt-6 sm:items-center sm:text-center lg:items-start lg:text-left">
+                  <p className="w-full text-base leading-7 text-primary-foreground/70 lg:text-lg">
+                    {s.text}
+                  </p>
+                  <div className="flex w-full flex-wrap gap-3 sm:justify-center lg:justify-start">
+                    <Button asChild size="lg" variant="flame">
+                      <Link href={s.cta.href}>
+                        {s.cta.label} <ArrowRight />
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
           ))}
@@ -214,9 +226,8 @@ export default function Home() {
           </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs leading-5 text-muted-foreground">
-              Prices are indicative and may change with market conditions,
-              quantity and delivery location. Final pricing is confirmed in
-              your quote.
+              Prices are indicative and may change with market conditions, quantity and delivery
+              location. Final pricing is confirmed in your quote.
             </p>
             <p className="text-xs font-semibold uppercase tracking-[.12em] text-primary">
               <Link href="/products" className="inline-flex items-center gap-2 hover:text-accent">
@@ -229,7 +240,10 @@ export default function Home() {
 
       <section className="grid bg-primary text-primary-foreground lg:grid-cols-2">
         <div className="min-h-[420px] overflow-hidden lg:min-h-[680px]">
-          <img
+          <Image
+            width={1600}
+            height={1000}
+            sizes="(max-width: 1024px) 100vw, 50vw"
             src={gantry}
             alt="Supreme Energy tanker at a petroleum loading gantry"
             loading="lazy"
@@ -243,21 +257,16 @@ export default function Home() {
               A filling station that comes to you.
             </h2>
             <p className="mt-7 max-w-xl leading-7 text-primary-foreground/70">
-              Our meter-equipped peddler truck delivers verified quantities
-              directly into your equipment or storage—ideal for estates,
-              construction sites, factories, fleets and generators.
+              Our meter-equipped peddler truck delivers verified quantities directly into your
+              equipment or storage—ideal for estates, construction sites, factories, fleets and
+              generators.
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {deliveryFeatures.map(({ icon: Icon, title, text }) => (
-                <div
-                  key={title}
-                  className="border-l-2 border-accent pl-4"
-                >
+                <div key={title} className="border-l-2 border-accent pl-4">
                   <Icon className="size-5 text-accent" />
                   <strong className="mt-3 block">{title}</strong>
-                  <span className="text-xs text-primary-foreground/60">
-                    {text}
-                  </span>
+                  <span className="text-xs text-primary-foreground/60">{text}</span>
                 </div>
               ))}
             </div>
@@ -285,19 +294,10 @@ export default function Home() {
           </div>
           <div className="grid border-t border-border md:grid-cols-2">
             {services.slice(0, 6).map((s, i) => (
-              <div
-                key={s.title}
-                className="border-b border-border p-6 md:odd:border-r"
-              >
-                <span className="font-display text-2xl text-accent">
-                  0{i + 1}
-                </span>
-                <h3 className="mt-6 font-display text-3xl text-primary">
-                  {s.title}
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                  {s.text}
-                </p>
+              <div key={s.title} className="border-b border-border p-6 md:odd:border-r">
+                <span className="font-display text-2xl text-accent">0{i + 1}</span>
+                <h3 className="mt-6 font-display text-3xl text-primary">{s.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{s.text}</p>
               </div>
             ))}
           </div>
@@ -338,15 +338,9 @@ export default function Home() {
               },
             ].map((s) => (
               <article key={s.step} className="bg-background p-8">
-                <span className="font-display text-4xl text-accent">
-                  {s.step}
-                </span>
-                <h3 className="mt-8 font-display text-3xl text-primary">
-                  {s.title}
-                </h3>
-                <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                  {s.text}
-                </p>
+                <span className="font-display text-4xl text-accent">{s.step}</span>
+                <h3 className="mt-8 font-display text-3xl text-primary">{s.title}</h3>
+                <p className="mt-4 text-sm leading-6 text-muted-foreground">{s.text}</p>
               </article>
             ))}
           </div>
@@ -354,7 +348,10 @@ export default function Home() {
       </section>
 
       <section className="relative min-h-[620px] overflow-hidden">
-        <img
+        <Image
+          width={1600}
+          height={1000}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           src={fleet}
           alt="Supreme Energy petroleum tanker fleet on the road"
           loading="lazy"
@@ -368,9 +365,8 @@ export default function Home() {
               Built to keep business moving.
             </h2>
             <p className="mt-6 max-w-lg leading-7 text-primary-foreground/75">
-              From a single metered drop to coordinated bulk movement, our
-              logistics approach combines visibility, disciplined handling and
-              dependable execution.
+              From a single metered drop to coordinated bulk movement, our logistics approach
+              combines visibility, disciplined handling and dependable execution.
             </p>
             <div className="mt-8 flex gap-3">
               <Button asChild variant="flame" size="lg">

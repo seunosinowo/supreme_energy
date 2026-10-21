@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Head from "next/head";
 import { CheckCircle2 } from "lucide-react";
 import { SiteShell, Meta, PageIntro } from "@/components/site/SiteShell";
@@ -39,13 +40,15 @@ export default function About() {
             Deliver value safely, transparently and on time.
           </h2>
           <p className="mt-7 leading-7 text-muted-foreground">
-            We connect clients to petroleum products and technical services
-            through responsive planning, experienced people and a firm
-            commitment to satisfaction. Our work spans downstream supply,
-            engineering, inspection, logistics, construction support and ICT.
+            We connect clients to petroleum products and technical services through responsive
+            planning, experienced people and a firm commitment to satisfaction. Our work spans
+            downstream supply, engineering, inspection, logistics, construction support and ICT.
           </p>
         </div>
-        <img
+        <Image
+          width={1600}
+          height={1000}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           src={images.operationsGrid}
           alt="Supreme Energy operations and capabilities"
           loading="lazy"
@@ -57,10 +60,7 @@ export default function About() {
           <p className="eyebrow text-accent">Core values</p>
           <div className="mt-8 grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
             {values.map((v) => (
-              <div
-                key={v}
-                className="flex items-center gap-4 bg-background p-6"
-              >
+              <div key={v} className="flex items-center gap-4 bg-background p-6">
                 <CheckCircle2 className="text-accent" />
                 <span className="font-display text-2xl text-primary">{v}</span>
               </div>

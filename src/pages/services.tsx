@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
 import { ArrowRight, Wrench } from "lucide-react";
@@ -27,27 +28,21 @@ export default function Services() {
       />
       <section className="mx-auto grid max-w-[1440px] gap-4 px-5 py-20 md:grid-cols-2 lg:px-10 xl:grid-cols-4">
         {services.map((s, i) => (
-          <article
-            key={s.title}
-            className="border border-border bg-card p-6"
-          >
+          <article key={s.title} className="border border-border bg-card p-6">
             <div className="flex items-center justify-between">
               <Wrench className="text-accent" />
-              <span className="font-display text-2xl text-muted-foreground">
-                0{i + 1}
-              </span>
+              <span className="font-display text-2xl text-muted-foreground">0{i + 1}</span>
             </div>
-            <h2 className="mt-10 font-display text-3xl text-primary">
-              {s.title}
-            </h2>
-            <p className="mt-4 text-sm leading-6 text-muted-foreground">
-              {s.text}
-            </p>
+            <h2 className="mt-10 font-display text-3xl text-primary">{s.title}</h2>
+            <p className="mt-4 text-sm leading-6 text-muted-foreground">{s.text}</p>
           </article>
         ))}
       </section>
       <section className="mx-auto grid max-w-[1440px] gap-10 px-5 pb-24 lg:grid-cols-2 lg:px-10">
-        <img
+        <Image
+          width={1600}
+          height={1000}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           src={ops}
           alt="Supreme Energy operational capabilities"
           loading="lazy"
@@ -60,9 +55,8 @@ export default function Services() {
               Quality and safety are part of the work—not an afterthought.
             </h2>
             <p className="mt-6 leading-7 text-muted-foreground">
-              Our approach brings planning, QA/QC, HSE awareness and clear
-              communication into every assignment, from procurement through
-              execution.
+              Our approach brings planning, QA/QC, HSE awareness and clear communication into every
+              assignment, from procurement through execution.
             </p>
             <Button asChild variant="flame" className="mt-8">
               <Link href="/quote">
