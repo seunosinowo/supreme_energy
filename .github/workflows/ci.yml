@@ -1,0 +1,47 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: npm run audit
+      - name: Smoke-test production routes
+        run: |
+          npm start > /tmp/supreme-energy.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000 > /dev/null; then break; fi
+            sleep 1
+          done
+          for route in / /products /services /about /projects /fleet /contact /quote /privacy /terms; do
+            curl --fail --silent "http://localhost:3000$route" > /dev/null
+          done
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t supreme-energy:ci .
+      - name: Smoke-test container
+        run: |
+          docker run -d --name supreme-energy -p 3000:3000 supreme-energy:ci
+          trap 'docker logs supreme-energy; docker rm -f supreme-energy' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000 > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
