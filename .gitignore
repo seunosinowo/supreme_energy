@@ -26,5 +26,7 @@ out
 *.sw?
 
 # Environment
-.env
-.env*.local
+.env*
+!.env.example
+coverage/
+*.tsbuildinfo
