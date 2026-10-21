@@ -22,8 +22,8 @@ export default function Contact() {
       </Head>
       <PageIntro
         eyebrow="Contact & quote"
-        title="Let&apos;s plan your next delivery."
-        text="Tell us the product, quantity and destination. Submit the form and it goes straight to our team — your estimate also downloads for your records."
+        title="Let's plan your next delivery."
+        text="Choose your product, quantity and destination to download an estimate. Email the PDF to our team or call us to arrange delivery."
         image={station}
         imageAlt="Supreme Energy station at dusk"
       />
@@ -34,22 +34,14 @@ export default function Contact() {
             Fast answers. Clear next steps.
           </h2>
           <div className="mt-8 grid gap-5">
-            <a
-              href={`tel:${company.phoneHref}`}
-              className="flex gap-4 border-b border-border pb-5"
-            >
+            <a href={`tel:${company.phoneHref}`} className="flex gap-4 border-b border-border pb-5">
               <Phone className="text-accent" />
               <span>
-                <small className="block text-muted-foreground">
-                  Phone & WhatsApp
-                </small>
+                <small className="block text-muted-foreground">Phone & WhatsApp</small>
                 <strong>{company.phone}</strong>
               </span>
             </a>
-            <a
-              href={`mailto:${company.email}`}
-              className="flex gap-4 border-b border-border pb-5"
-            >
+            <a href={`mailto:${company.email}`} className="flex gap-4 border-b border-border pb-5">
               <Mail className="text-accent" />
               <span>
                 <small className="block text-muted-foreground">Email</small>
@@ -65,12 +57,11 @@ export default function Contact() {
             </div>
           </div>
           <div className="mt-10 border-l-4 border-accent bg-secondary p-5 text-sm leading-6 text-muted-foreground">
-            Email delivery is activated once the backend API is connected. Until then,
-            the form still prepares a professional downloadable estimate and queues
-            the request locally for immediate follow-up.
+            The quote builder downloads a PDF on your device. It does not send or queue a request.
+            Email your estimate to our team or call us to confirm supply.
           </div>
         </aside>
-        <QuoteForm initialProduct={product} />
+        <QuoteForm key={product ?? "default"} initialProduct={product} />
       </section>
     </SiteShell>
   );

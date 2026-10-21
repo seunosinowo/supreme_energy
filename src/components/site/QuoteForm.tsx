@@ -1,21 +1,11 @@
 import { useMemo, useState, type FormEvent } from "react";
-import {
-  CheckCircle2, Download, Loader2, Plus, Send, Trash2 } from "lucide-react";
+import { CheckCircle2, Download, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DELIVERY_ALLOWANCE, PRICE_LAST_UPDATED, products } from "@/data/products";
-import { company } from "@/lib/site";
+import { PRICE_LAST_UPDATED, products } from "@/data/products";
+import { quoteSchema, calculateQuoteTotal, type Line, type Fields } from "@/lib/quote";
+import { buildQuoteDoc } from "@/lib/pdf/buildQuoteDoc";
 
-type Line = { productId: string; quantity: number };
-type Fields = {
-  name: string;
-  companyName: string;
-  phone: string;
-  email: string;
-  state: string;
-  city: string;
-  notes: string;
-};
 const emptyFields: Fields = {
   name: "",
   companyName: "",
@@ -26,118 +16,10 @@ const emptyFields: Fields = {
   notes: "",
 };
 
-async function buildQuoteDoc(lines: Line[], fields: Fields, total: number) {
-  const { jsPDF } = await import("jspdf");
-  const doc = new jsPDF();
-  const blue = [8, 53, 126] as const;
-  const orange = [243, 112, 33] as const;
-  const pdfMoney = (n: number) =>
-    `NGN ${new Intl.NumberFormat("en-NG", { maximumFractionDigits: 0 }).format(n)}`;
-  doc.setFillColor(...blue);
-  doc.rect(0, 0, 210, 38, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(23);
-  doc.text("SUPREME ENERGY", 16, 17);
-  doc.setFontSize(9);
-  doc.text(`RC ${company.rc}  |  PETROLEUM SUPPLY & METERED DELIVERY`, 16, 26);
-  doc.setTextColor(...orange);
-  doc.text(company.tagline.toUpperCase(), 16, 33);
-  doc.setTextColor(28, 33, 42);
-  doc.setFontSize(20);
-  doc.text("ESTIMATED SUPPLY QUOTE", 16, 55);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.text(
-    `Prepared for: ${fields.name}${fields.companyName ? ` / ${fields.companyName}` : ""}`,
-    16,
-    64,
-  );
-  doc.text(`Delivery: ${fields.city}, ${fields.state}`, 16, 70);
-  doc.text(
-    `Issued: ${new Date().toLocaleDateString("en-GB")}  •  Valid for 48 hours`,
-    16,
-    76,
-  );
-  doc.text(`Price list updated: ${PRICE_LAST_UPDATED}`, 16, 82);
-  let y = 96;
-  doc.setFillColor(239, 243, 248);
-  doc.rect(14, y - 7, 182, 10, "F");
-  doc.setFont("helvetica", "bold");
-  doc.text("PRODUCT", 17, y);
-  doc.text("QTY", 86, y);
-  doc.text("RATE", 118, y);
-  doc.text("AMOUNT", 160, y);
-  y += 12;
-  lines.forEach((l) => {
-    const p = products.find((x) => x.id === l.productId);
-    if (!p) return;
-    doc.setFont("helvetica", "bold");
-    doc.text(p.shortName, 17, y);
-    doc.setFont("helvetica", "normal");
-    doc.text(
-      `${l.quantity.toLocaleString()} ${p.unit}${l.quantity === 1 ? "" : "s"}`,
-      86,
-      y,
-    );
-    doc.text(pdfMoney(p.price), 118, y);
-    doc.text(pdfMoney(p.price * l.quantity), 160, y);
-    y += 6;
-    doc.setFontSize(7.5);
-    doc.setTextColor(90, 97, 108);
-    doc.text(`Density: ${p.density}  |  Flash point: ${p.flashPoint}`, 17, y);
-    doc.setTextColor(28, 33, 42);
-    doc.setFontSize(9);
-    y += 11;
-  });
-  doc.setDrawColor(210, 215, 223);
-  doc.line(14, y, 196, y);
-  y += 10;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(13);
-  doc.text("ESTIMATED TOTAL", 110, y);
-  doc.setTextColor(...blue);
-  doc.text(pdfMoney(total), 160, y);
-  y += 18;
-  doc.setTextColor(28, 33, 42);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.5);
-  doc.text(
-    "Important: This estimate excludes any delivery fee and remains subject to availability, location,",
-    16,
-    y,
-  );
-  doc.text(
-    "final quantity confirmation and written acceptance by Supreme Energy. Product specifications are indicative.",
-    16,
-    y + 6,
-  );
-  doc.text(`Contact: ${company.phone}  |  ${company.email}`, 16, y + 18);
-  doc.text(company.address, 16, y + 24);
-  const pdfBlob = doc.output("blob");
-  const pdfName = `Supreme-Energy-Quote-${Date.now()}.pdf`;
-  const pdfDataUri = doc.output("datauristring");
-  const url = URL.createObjectURL(pdfBlob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = pdfName;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-  return { pdfBlob, pdfName, pdfDataUri };
-}
-
-export function QuoteForm({
-  initialProduct,
-}: {
-  initialProduct?: string | undefined;
-}) {
+export function QuoteForm({ initialProduct }: { initialProduct?: string | undefined }) {
   const [lines, setLines] = useState<Line[]>([
     {
-      productId: products.some((p) => p.id === initialProduct)
-        ? String(initialProduct)
-        : "ago",
+      productId: products.some((p) => p.id === initialProduct) ? String(initialProduct) : "ago",
       quantity: 1000,
     },
   ]);
@@ -145,18 +27,13 @@ export function QuoteForm({
   const [status, setStatus] = useState<"idle" | "working" | "done">("idle");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const subtotal = useMemo(
-    () =>
-      lines.reduce(
-        (sum, l) =>
-          sum +
-          (products.find((p) => p.id === l.productId)?.price ?? 0) *
-            Math.max(0, l.quantity),
-        0,
-      ),
-    [lines],
-  );
-  const total = subtotal + DELIVERY_ALLOWANCE;
+  const total = useMemo(() => {
+    try {
+      return calculateQuoteTotal(lines);
+    } catch {
+      return 0;
+    }
+  }, [lines]);
   const money = (n: number) =>
     new Intl.NumberFormat("en-NG", {
       style: "currency",
@@ -168,73 +45,41 @@ export function QuoteForm({
   }
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (status === "working") return;
     setError("");
     setSuccessMessage("");
-    if (
-      !fields.name.trim() ||
-      !fields.phone.trim() ||
-      !fields.email.includes("@") ||
-      !fields.city.trim()
-    ) {
-      setError("Please complete your name, phone, email and delivery city.");
-      return;
-    }
-    if (lines.some((l) => l.quantity <= 0)) {
-      setError("Each product quantity must be greater than zero.");
+    const parsed = quoteSchema.safeParse({ fields, lines });
+    if (!parsed.success) {
+      setStatus("idle");
+      setError(parsed.error.issues[0].message);
       return;
     }
     setStatus("working");
-    const { pdfBlob, pdfName, pdfDataUri } = await buildQuoteDoc(lines, fields, total);
-
-    const payload = {
-      fields,
-      lines: lines.map((l) => {
-        const p = products.find((x) => x.id === l.productId);
-        return {
-          productId: l.productId,
-          productName: p?.name ?? l.productId,
-          shortName: p?.shortName ?? l.productId,
-          quantity: l.quantity,
-          unit: p?.unit,
-          rate: p?.price ?? 0,
-          amount: (p?.price ?? 0) * l.quantity,
-        };
-      }),
-      subtotal,
-      total,
-      priceUpdated: PRICE_LAST_UPDATED,
-      pdfFileName: pdfName,
-    };
-
     try {
-      const res = await fetch("/api/send-quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...payload,
-          pdfDataUri,
-        }),
-      });
-      if (!res.ok) throw new Error(`Request failed (${res.status})`);
-      setSuccessMessage(
-        "Your request has been sent to our team. A copy of the estimate is downloading now.",
+      await buildQuoteDoc(
+        parsed.data.lines,
+        parsed.data.fields,
+        calculateQuoteTotal(parsed.data.lines),
       );
+      setSuccessMessage(
+        "Your estimate has downloaded. Email it to our team or call us to confirm availability and delivery. This form does not send your details.",
+      );
+      setStatus("done");
     } catch {
-      setSuccessMessage(
-        "Your estimate has downloaded. We will contact you shortly to confirm availability and delivery terms.",
-      );
-    } finally {
-      void pdfBlob;
-      void pdfName;
+      setError("The PDF could not be generated. Please try again or contact our team.");
+      setStatus("idle");
     }
-    setStatus("done");
   }
   return (
-    <form onSubmit={submit} className="border border-border bg-card p-5 shadow-sm sm:p-8">
+    <form
+      noValidate
+      onSubmit={submit}
+      className="border border-border bg-card p-5 shadow-sm sm:p-8"
+    >
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="eyebrow text-accent">Quote builder</p>
-          <h2 className="mt-2 font-display text-4xl text-primary">Send your request</h2>
+          <h2 className="mt-2 font-display text-4xl text-primary">Download your estimate</h2>
         </div>
         <span className="text-right text-xs text-muted-foreground">
           Prices updated
@@ -254,9 +99,7 @@ export function QuoteForm({
                 value={line.productId}
                 onChange={(e) =>
                   setLines((ls) =>
-                    ls.map((x, j) =>
-                      j === i ? { ...x, productId: e.target.value } : x,
-                    ),
+                    ls.map((x, j) => (j === i ? { ...x, productId: e.target.value } : x)),
                   )
                 }
                 className="mt-2 h-11 w-full border border-input bg-background px-3 text-sm"
@@ -275,12 +118,11 @@ export function QuoteForm({
                 min="1"
                 max="10000000"
                 type="number"
+                step="any"
                 value={line.quantity}
                 onChange={(e) =>
                   setLines((ls) =>
-                    ls.map((x, j) =>
-                      j === i ? { ...x, quantity: Number(e.target.value) } : x,
-                    ),
+                    ls.map((x, j) => (j === i ? { ...x, quantity: Number(e.target.value) } : x)),
                   )
                 }
               />
@@ -302,9 +144,8 @@ export function QuoteForm({
         type="button"
         variant="outline"
         className="mt-3"
-        onClick={() =>
-          setLines((ls) => [...ls, { productId: "ago", quantity: 1000 }])
-        }
+        disabled={lines.length >= 50 || status === "working"}
+        onClick={() => setLines((ls) => [...ls, { productId: "ago", quantity: 1000 }])}
       >
         <Plus />
         Add product
@@ -382,66 +223,25 @@ export function QuoteForm({
             Estimated product total
           </p>
           <p className="mt-1 font-display text-4xl text-primary">{money(total)}</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Delivery fee confirmed separately
-          </p>
+          <p className="mt-1 text-xs text-muted-foreground">Delivery fee confirmed separately</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button
-            type="submit"
-            size="lg"
-            variant="flame"
-            disabled={status === "working"}
-          >
-            {status === "working" ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <Send />
-            )}
-            {status === "working"
-              ? "Sending…"
-              : "Send quote request"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            disabled={status === "working"}
-            onClick={async (e) => {
-              e.preventDefault();
-              setError("");
-              setSuccessMessage("");
-              if (
-                !fields.name.trim() ||
-                !fields.phone.trim() ||
-                !fields.email.includes("@") ||
-                !fields.city.trim()
-              ) {
-                setError(
-                  "Please complete your name, phone, email and delivery city.",
-                );
-                return;
-              }
-              if (lines.some((l) => l.quantity <= 0)) {
-                setError("Each product quantity must be greater than zero.");
-                return;
-              }
-              setStatus("working");
-              await buildQuoteDoc(lines, fields, total);
-              setSuccessMessage("Your branded estimate has downloaded.");
-              setStatus("done");
-            }}
-          >
-            <Download />
-            Download PDF
+          <Button type="submit" size="lg" variant="flame" disabled={status === "working"}>
+            {status === "working" ? <Loader2 className="animate-spin" /> : <Download />}
+            {status === "working" ? "Generating…" : "Download PDF"}
           </Button>
         </div>
       </div>
       {error && (
-        <p className="mt-4 text-sm font-semibold text-destructive">{error}</p>
+        <p role="alert" className="mt-4 text-sm font-semibold text-destructive">
+          {error}
+        </p>
       )}
       {status === "done" && successMessage && (
-        <p className="mt-4 flex items-center gap-2 text-sm font-semibold text-success">
+        <p
+          role="status"
+          className="mt-4 flex items-center gap-2 text-sm font-semibold text-success"
+        >
           <CheckCircle2 className="size-4" />
           {successMessage}
         </p>
@@ -450,4 +250,4 @@ export function QuoteForm({
   );
 }
 
-export type { Line, Fields };
+export type { Line, Fields } from "@/lib/quote";

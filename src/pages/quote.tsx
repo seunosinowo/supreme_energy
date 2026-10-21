@@ -24,7 +24,7 @@ export default function Quote() {
       <PageIntro
         eyebrow="Instant quote"
         title="Build your branded estimate."
-        text="Pick your products, quantity and destination. Submit the form to send it straight to our team — a professional Supreme Energy PDF estimate also downloads for your records."
+        text="Pick your products, quantity and destination to download a Supreme Energy PDF estimate. Email it to our team to request supply."
         image={hero}
         imageAlt="Petroleum tanker at a loading gantry"
       >
@@ -39,7 +39,7 @@ export default function Quote() {
 
       <section className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-24">
         <div className="mx-auto max-w-4xl">
-          <QuoteForm initialProduct={product} />
+          <QuoteForm key={product ?? "default"} initialProduct={product} />
         </div>
 
         <div className="mt-16 grid gap-6 border-t border-border pt-12 sm:grid-cols-3">
