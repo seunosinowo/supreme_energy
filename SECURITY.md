@@ -4,8 +4,8 @@ Report suspected vulnerabilities privately to info@supreme-energy.com.ng.
 Include reproduction steps and affected versions; do not publish credentials
 or customer details in public issues.
 
-No environment secrets are needed for this application. `.env*` is ignored
-except the public `.env.example`, and private environment files are excluded
+No environment secrets are needed for this application. All `.env*` files are ignored
+by Git, and environment files are excluded
 from the Docker build context. `NEXT_PUBLIC_*` values are visible in client
 bundles and must never contain secrets.
 

@@ -117,7 +117,7 @@ No environment variables or credentials are needed to install, test, build or
 run this site. Company details live in `src/lib/site.ts`.
 
 If future integrations need credentials, put them in `.env.local`. Git and
-Docker exclude `.env*` files except the public `.env.example`. Never put
+Docker exclude all `.env*` files. Never put
 secrets in `NEXT_PUBLIC_*` variables, which are visible to browsers.
 See [SECURITY.md](SECURITY.md) for reporting and credential handling.
 
