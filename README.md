@@ -1,5 +1,7 @@
 # Supreme Energy
 
+[![CI](https://github.com/seunosinowo/supreme_energy/actions/workflows/ci.yml/badge.svg)](https://github.com/seunosinowo/supreme_energy/actions/workflows/ci.yml)
+
 Corporate website for **Supreme Energy (RC 7982142)** — a petroleum products,
 engineering and logistics company based in Lagos, Nigeria.
 
@@ -13,17 +15,17 @@ Tagline: _"…your satisfaction is our priority"_
 
 ## Tech Stack
 
-| Layer      | Choice                                     |
-| ---------- | ------------------------------------------ |
-| Framework  | **Next.js 15 (Pages Router)**              |
-| Language   | TypeScript 5                               |
-| Styling    | Tailwind CSS 4 + `@tailwindcss/postcss`    |
-| UI Kit     | shadcn/ui components (Radix primitives)    |
-| Icons      | Lucide React                               |
-| Forms      | React Hook Form + Zod (reserved)           |
-| PDFs       | jsPDF                                      |
-| Charts     | Recharts                                   |
-| Lint/Format| ESLint + Prettier                          |
+| Layer       | Choice                                  |
+| ----------- | --------------------------------------- |
+| Framework   | **Next.js 16 (Pages Router)**           |
+| Language    | TypeScript 5                            |
+| Styling     | Tailwind CSS 4 + `@tailwindcss/postcss` |
+| UI Kit      | shadcn/ui components (Radix primitives) |
+| Icons       | Lucide React                            |
+| Forms       | Zod quote validation                    |
+| PDFs        | jsPDF                                   |
+| Charts      | Recharts                                |
+| Lint/Format | ESLint + Prettier                       |
 
 ### Project Layout (standard Pages Router)
 
@@ -62,13 +64,13 @@ src/
 
 ### 1. Prerequisites
 
-- **Node.js 20.10+** (or any LTS compatible with Next 15 / React 19).
-- **npm** (recommended; pnpm and yarn also work).
+- **Node.js 24 LTS** (see `.nvmrc`).
+- **npm 11**, using the committed `package-lock.json`.
 
 ### 2. Install
 
 ```bash
-npm install
+npm ci
 ```
 
 ### 3. Run the dev server
@@ -88,30 +90,36 @@ npm start
 
 The build output goes into the standard Next `.next/` folder.
 
-### 5. Lint / format
+### 5. Verify changes
 
 ```bash
-npm run lint
-npm run format
+npm run check          # lint, typecheck and regression tests with coverage
+npm run test           # run once
+npm run test:watch     # interactive watch mode
+npm run test:coverage  # coverage and enforced thresholds
+npm run audit         # fails on high/critical dependency advisories
+npm run format        # format source
 ```
+
+Tests cover quote validation, catalogue totals, form interactions, download
+failures, actual PDF output and multi-page quotes. Coverage thresholds apply
+to the quote schema, total calculator, form and PDF module: 90% statements,
+90% lines, 90% functions and 80% branches. They do not represent whole-site
+coverage. GitHub Actions runs these checks on pushes and pull requests, builds
+and smoke-tests the production routes, audits dependencies and verifies Docker.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow.
 
 ---
 
 ## Environment Variables
 
-Copy `.env.example` to `.env.local` and fill in values as needed. At the
-moment the site generates PDF quotes **client-side** (no server e-mail
-delivery), so no environment variables are required for local development.
+No environment variables or credentials are needed to install, test, build or
+run this site. Company details live in `src/lib/site.ts`.
 
-If you later wire the contact form to an e-mail provider (Resend, SendGrid,
-Nodemailer), add the relevant keys here.
-
-```
-# Example
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-COMPANY_EMAIL=info@supreme-energy.com.ng
-COMPANY_PHONE=+2349024876164
-```
+If future integrations need credentials, put them in `.env.local`. Git and
+Docker exclude `.env*` files except the public `.env.example`. Never put
+secrets in `NEXT_PUBLIC_*` variables, which are visible to browsers.
+See [SECURITY.md](SECURITY.md) for reporting and credential handling.
 
 ---
 
@@ -123,16 +131,16 @@ All petroleum product data lives in a single file for easy edits:
 
 Each entry contains:
 
-| Field         | Purpose                                            |
-| ------------- | -------------------------------------------------- |
-| `id`          | Stable id, used in query strings (`?product=ago`)  |
-| `shortName`   | Display code (PMS, AGO, LPG…)                      |
-| `name`        | Full English product name                          |
-| `price`       | Current unit price in **₦ NGN**                    |
-| `unit`        | `"litre"` or `"kg"`                                |
-| `density`     | Reference density range (static)                   |
-| `flashPoint`  | Reference flash-point range (static)               |
-| `note`        | Short sales description                            |
+| Field        | Purpose                                           |
+| ------------ | ------------------------------------------------- |
+| `id`         | Stable id, used in query strings (`?product=ago`) |
+| `shortName`  | Display code (PMS, AGO, LPG…)                     |
+| `name`       | Full English product name                         |
+| `price`      | Current unit price in **₦ NGN**                   |
+| `unit`       | `"litre"` or `"kg"`                               |
+| `density`    | Reference density range (static)                  |
+| `flashPoint` | Reference flash-point range (static)              |
+| `note`       | Short sales description                           |
 
 **Update the date** in `PRICE_LAST_UPDATED` whenever prices change — this
 string is printed on the home page, products page and the generated PDF
@@ -146,21 +154,22 @@ export const PRICE_LAST_UPDATED = "15 September 2026, 6:00 PM WAT";
 
 ## Quote Form & PDF Generation
 
-The `/contact` page ships with a **Quote builder** (`QuoteForm.tsx`):
+The `/contact` and `/quote` pages provide a local PDF estimate builder:
 
-1. Visitor picks product(s), quantities, state, city, contact details.
-2. Estimated total updates live.
-3. On submit → a branded `Supreme-Energy-Quote-<timestamp>.pdf` downloads.
-4. The PDF includes the price list date, validity (48 h), density / flash
-   point per line and the company contact block.
+1. Choose products, quantities, destination and contact details.
+2. Zod validates required fields, email, phone, catalogue IDs and finite positive quantities.
+3. Download a branded PDF with catalogue prices, a 48-hour validity note,
+   product specifications, delivery notes and contact details.
+4. Email the PDF to the company or call to confirm supply and delivery terms.
 
-Until an e-mail sender is configured, the on-screen copy reads:
-> _"Email delivery is activated after Supreme Energy's sender domain is
-> verified…"_
+The form does not send email, call an API, queue requests or store customer
+details. PDF failures show a retryable error. A quote supports up to 50 lines
+and 10,000,000 units per line; fractional quantities are supported. Long quotes
+flow onto additional pages. Delivery fees are confirmed separately.
 
-To enable real e-mail delivery, swap the `submit()` handler in
-[QuoteForm.tsx](src/components/site/QuoteForm.tsx) to call an API route
-(e.g. `/pages/api/send-quote.ts`) that uses Resend / Nodemailer.
+Validation and totals live in [src/lib/quote.ts](src/lib/quote.ts). PDF layout
+and downloading live in [src/lib/pdf/buildQuoteDoc.ts](src/lib/pdf/buildQuoteDoc.ts).
+The UI lives in [QuoteForm.tsx](src/components/site/QuoteForm.tsx).
 
 ---
 
@@ -171,9 +180,9 @@ Edit [src/lib/site.ts](src/lib/site.ts):
 - `company` — name, RC number, address, phone, e-mail, WhatsApp number.
 - `services` — cards rendered on `/services` and on the homepage grid.
 
-Update [src/lib/images.ts](src/lib/images.ts) to replace the stock AI-image
-URLs with your own hosted images (CDN, S3, or anything reachable over
-`https://`). Then swap the imported strings in the page files.
+Images are served locally from `public/` using `next/image`. Update the paths
+in [src/lib/images.ts](src/lib/images.ts) when replacing assets. Google Fonts
+are fetched by the browser; the production build does not require font downloads.
 
 ---
 
@@ -210,7 +219,18 @@ The project is a standard Next.js app — deploy it anywhere that runs Node:
 
 - **Vercel** (recommended): `vercel deploy` — zero config for Pages Router.
 - **Self-hosted / any Node host**: `npm run build && npm start`.
-- **Docker / container**: build with a standard `node:20-alpine` image.
+- **Docker**: the included Node 24 multi-stage image runs quality checks,
+  builds standalone output and serves it as a non-root user:
+
+```bash
+docker build -t supreme-energy .
+docker run --rm -p 3000:3000 supreme-energy
+```
+
+Open [http://localhost:3000](http://localhost:3000). The container includes a
+health check. Private environment files, Git history and local build artifacts
+are excluded from the build context. No external database or email service is
+required. Dependency installation still requires access to the npm registry.
 
 ---
 
