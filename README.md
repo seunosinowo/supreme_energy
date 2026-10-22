@@ -101,13 +101,34 @@ npm run audit         # fails on high/critical dependency advisories
 npm run format        # format source
 ```
 
-Tests cover quote validation, catalogue totals, form interactions, download
-failures, actual PDF output and multi-page quotes. Coverage thresholds apply
+Tests cover product catalogue shape, quote validation, catalogue totals, form
+interactions, download failures, actual PDF output, multi-page quotes and
+sidebar state on desktop and mobile. Coverage thresholds apply
 to the quote schema, total calculator, form and PDF module: 90% statements,
 90% lines, 90% functions and 80% branches. They do not represent whole-site
 coverage. GitHub Actions runs these checks on pushes and pull requests, builds
 and smoke-tests the production routes, audits dependencies and verifies Docker.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow.
+
+## CI
+
+[GitHub Actions](https://github.com/seunosinowo/supreme_energy/actions/workflows/ci.yml)
+runs on every push and pull request:
+
+| Job         | Validates                                                                                                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `quality`   | Clean `npm ci` install, ESLint, generated route types and TypeScript, Vitest with coverage thresholds, production build, dependency audit, and HTTP checks for all public routes |
+| `container` | Linux Docker image build (including the quality checks) and an HTTP startup check                                                                                                |
+
+The workflow uses `actions/checkout@v4` and `actions/setup-node@v4`. Setup Node
+caches npm downloads using the lockfile; `npm ci` still installs dependencies
+from scratch. npm 11 is the supported package manager, and `package-lock.json`
+is the committed install contract.
+
+Repository maintainers should configure a GitHub ruleset or branch protection
+for `main` that requires both `quality` and `container` to pass before merging.
+The workflow defines those checks; this README does not enable repository
+protection settings. Review the run for the exact commit being merged.
 
 ---
 

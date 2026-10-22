@@ -14,10 +14,18 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
-      - run: npm run check
-      - run: npm run build
-      - run: npm run audit
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Lint source
+        run: npm run lint
+      - name: Generate route types and check TypeScript
+        run: npm run typecheck
+      - name: Test with coverage thresholds
+        run: npm run test:coverage
+      - name: Build standalone production server
+        run: npm run build
+      - name: Audit dependency security
+        run: npm run audit
       - name: Smoke-test production routes
         run: |
           npm start > /tmp/supreme-energy.log 2>&1 &
