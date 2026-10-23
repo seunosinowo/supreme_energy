@@ -101,14 +101,29 @@ npm run audit         # fails on high/critical dependency advisories
 npm run format        # format source
 ```
 
-Tests cover product catalogue shape, quote validation, catalogue totals, form
-interactions, download failures, actual PDF output, multi-page quotes and
-sidebar state on desktop and mobile. Coverage thresholds apply
-to the quote schema, total calculator, form and PDF module: 90% statements,
-90% lines, 90% functions and 80% branches. They do not represent whole-site
-coverage. GitHub Actions runs these checks on pushes and pull requests, builds
-and smoke-tests the production routes, audits dependencies and verifies Docker.
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow.
+Tests cover every public page, product-to-quote links, catalogue shape and
+totals, quote validation, PDF contents and pagination, mobile navigation,
+slideshow pause/reduced-motion behavior, viewport detection, sidebar state,
+carousel keyboard controls and menu selection/focus behavior.
+
+Coverage includes public pages, site components, domain/configuration modules,
+hooks and the exercised UI primitives. Enforced thresholds are:
+
+| Scope                                                  | Statements / lines | Functions | Branches |
+| ------------------------------------------------------ | ------------------ | --------- | -------- |
+| Overall measured code                                  | 90%                | 80%       | 75%      |
+| Quote schema, calculator, form and PDF module together | 90%                | 90%       | 80%      |
+| Each public page                                       | 95%                | 90%       | 80%      |
+
+Next's `_app` and `_document` wrappers are verified by the production build.
+The suite does not claim to cover every unused UI primitive or replace real
+browser end-to-end/visual tests. Page tests live in `tests/pages` so they cannot
+become public Next.js routes. `npm test` writes JUnit results to
+`test-results/vitest.xml`; coverage runs also generate `coverage/`.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow and
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for boundaries, data flow, invariants
+and known limits.
 
 ## CI
 
@@ -129,6 +144,10 @@ Repository maintainers should configure a GitHub ruleset or branch protection
 for `main` that requires both `quality` and `container` to pass before merging.
 The workflow defines those checks; this README does not enable repository
 protection settings. Review the run for the exact commit being merged.
+
+The quality job retains JUnit and coverage output for seven days as the
+`quality-reports` artifact, including when a test fails. This provides the
+actual test evidence alongside the workflow result.
 
 ---
 
