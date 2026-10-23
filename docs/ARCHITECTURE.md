@@ -85,7 +85,8 @@ browser end-to-end or visual-regression suite. `_app` and `_document` are
 framework wrappers verified by the production build rather than DOM unit tests.
 Coverage does not claim to cover every unused UI primitive.
 
-No credentials or environment file are required. All `.env*` files are excluded
-from Git. Any future delivery API needs its own server-side validation, abuse
+No credentials or environment file are required. Private `.env*` files are excluded
+from Git; `.env.example` contains only documentation and a commented placeholder.
+Any future delivery API needs its own server-side validation, abuse
 controls, request limits, secret handling and success/failure integration tests;
 client-side validation alone would not protect that new trust boundary.

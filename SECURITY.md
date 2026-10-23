@@ -4,9 +4,9 @@ Report suspected vulnerabilities privately to info@supreme-energy.com.ng.
 Include reproduction steps and affected versions; do not publish credentials
 or customer details in public issues.
 
-No environment secrets are needed for this application. All `.env*` files are ignored
-by Git, and environment files are excluded
-from the Docker build context. `NEXT_PUBLIC_*` values are visible in client
+No environment secrets are needed for this application. Private `.env*` files are ignored
+by Git and excluded from the Docker build context. The credential-free
+`.env.example` is the only exception. `NEXT_PUBLIC_*` values are visible in client
 bundles and must never contain secrets.
 
 If a credential has ever been published, revoke or rotate it with its provider.

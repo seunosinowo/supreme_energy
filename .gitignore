@@ -27,6 +27,7 @@ out
 
 # Environment
 .env*
+!.env.example
 coverage/
 test-results/
 *.tsbuildinfo

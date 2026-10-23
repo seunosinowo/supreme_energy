@@ -156,8 +156,12 @@ actual test evidence alongside the workflow result.
 No environment variables or credentials are needed to install, test, build or
 run this site. Company details live in `src/lib/site.ts`.
 
+[.env.example](.env.example) documents this contract and contains only a
+commented placeholder for future configuration. It is not loaded by the app,
+and you do not need to copy it to run the current site.
+
 If future integrations need credentials, put them in `.env.local`. Git and
-Docker exclude all `.env*` files. Never put
+Docker exclude private `.env*` files, with only `.env.example` allowed. Never put
 secrets in `NEXT_PUBLIC_*` variables, which are visible to browsers.
 See [SECURITY.md](SECURITY.md) for reporting and credential handling.
 
