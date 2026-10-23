@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import { fileURLToPath } from "node:url";
 
 export default defineConfig({
@@ -6,6 +6,7 @@ export default defineConfig({
   oxc: { jsx: { runtime: "automatic" } },
   test: {
     environment: "jsdom",
+    exclude: [...configDefaults.exclude, "tests/e2e/**"],
     maxWorkers: 4,
     setupFiles: ["./tests/setup.ts"],
     reporters: ["default", "junit"],
