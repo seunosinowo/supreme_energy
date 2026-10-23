@@ -97,6 +97,7 @@ npm run check          # lint, typecheck and regression tests with coverage
 npm run test           # run once
 npm run test:watch     # interactive watch mode
 npm run test:coverage  # coverage and enforced thresholds
+npm run test:e2e       # build and run real-browser customer journeys
 npm run audit         # fails on high/critical dependency advisories
 npm run format        # format source
 ```
@@ -116,10 +117,46 @@ hooks and the exercised UI primitives. Enforced thresholds are:
 | Each public page                                       | 95%                | 90%       | 80%      |
 
 Next's `_app` and `_document` wrappers are verified by the production build.
-The suite does not claim to cover every unused UI primitive or replace real
-browser end-to-end/visual tests. Page tests live in `tests/pages` so they cannot
+The component suite does not claim to cover every unused UI primitive or browser
+layout. Page tests live in `tests/pages` so they cannot
 become public Next.js routes. `npm test` writes JUnit results to
 `test-results/vitest.xml`; coverage runs also generate `coverage/`.
+
+### 6. Real-browser tests
+
+After `npm ci`, install Playwright's isolated browser builds once:
+
+```bash
+npx playwright install chromium firefox
+npm run test:e2e
+```
+
+`test:e2e` builds the app, starts its standalone production server on
+`http://127.0.0.1:4173`, and runs the same customer journeys in desktop Chromium,
+desktop Firefox and mobile Chromium with Pixel 7 device emulation. This is
+browser emulation, not testing on a physical phone or Safari.
+
+The journeys cover product selection, fractional quantities, actual downloaded
+PDF contents, invalid inputs and correction, recovery from a failed browser
+download, multi-product totals, responsive navigation, Escape/focus behavior,
+and 404 recovery. They use the real form and jsPDF, with one explicit browser
+API fault-injection test. Optional Google Fonts requests are blocked so the
+journeys do not need that external service. Uncaught application/hydration
+errors fail the tests.
+
+Useful commands:
+
+```bash
+npm run test:e2e -- --project=chromium  # one browser project
+npm run test:e2e:ui                    # interactive test runner
+npm run test:e2e:report                # inspect the most recent HTML report
+```
+
+Playwright writes HTML results to `playwright-report/`, JUnit results to
+`test-results/playwright.xml`, and failure traces, screenshots and videos to
+`test-results/playwright/`. These generated files are ignored by Git and Docker.
+Vitest excludes `tests/e2e` so unit tests and browser tests run independently.
+The browser suite is not a pixel-by-pixel visual-regression baseline.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for boundaries, data flow, invariants
@@ -133,6 +170,7 @@ runs on every push and pull request:
 | Job         | Validates                                                                                                                                                                        |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `quality`   | Clean `npm ci` install, ESLint, generated route types and TypeScript, Vitest with coverage thresholds, production build, dependency audit, and HTTP checks for all public routes |
+| `browser`   | Production build and real Chromium, Firefox and mobile Chromium customer journeys, with HTML/JUnit reports and failure diagnostics                                               |
 | `container` | Linux Docker image build (including the quality checks) and an HTTP startup check                                                                                                |
 
 The workflow uses `actions/checkout@v4` and `actions/setup-node@v4`. Setup Node
@@ -141,13 +179,17 @@ from scratch. npm 11 is the supported package manager, and `package-lock.json`
 is the committed install contract.
 
 Repository maintainers should configure a GitHub ruleset or branch protection
-for `main` that requires both `quality` and `container` to pass before merging.
+for `main` that requires `quality`, `browser` and `container` to pass before merging.
 The workflow defines those checks; this README does not enable repository
 protection settings. Review the run for the exact commit being merged.
 
 The quality job retains JUnit and coverage output for seven days as the
 `quality-reports` artifact, including when a test fails. This provides the
 actual test evidence alongside the workflow result.
+
+The browser job retains its `browser-reports` artifact for seven days, including
+failure traces, screenshots and videos when a browser journey fails. CI installs
+the required browser system libraries with Playwright's `--with-deps` option.
 
 ---
 

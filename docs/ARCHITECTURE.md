@@ -80,10 +80,20 @@ are retained as the `quality-reports` artifact on each quality-job run.
 
 The component tests render real Next/Radix components with an isolated router
 context. Carousel unit tests substitute the layout engine so its callbacks and
-subscriptions can be exercised deterministically. The suite is not a real
-browser end-to-end or visual-regression suite. `_app` and `_document` are
+subscriptions can be exercised deterministically. `_app` and `_document` are
 framework wrappers verified by the production build rather than DOM unit tests.
 Coverage does not claim to cover every unused UI primitive.
+
+The independent Playwright suite in `tests/e2e` drives the built standalone
+server in desktop Chromium, desktop Firefox and mobile Chromium emulation.
+It follows actual links, fills the real form, reads actual PDF downloads and
+checks validation correction, download-failure recovery, product totals,
+responsive navigation and 404 recovery. One test injects a failure in the
+browser's blob-URL API; application modules and jsPDF are not mocked. Optional
+Google Fonts requests are blocked so external font availability cannot decide
+the outcome. Uncaught application errors fail each journey. CI retains the
+`browser-reports` artifact, with traces/screenshots/videos on failure. This
+suite is not a physical-device, Safari or visual-regression baseline.
 
 No credentials or environment file are required. Private `.env*` files are excluded
 from Git; `.env.example` contains only documentation and a commented placeholder.
