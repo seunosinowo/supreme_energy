@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ArrowRight, Mail, Menu, Phone, X } from "lucide-react";
@@ -18,6 +18,18 @@ const nav = [
 export function SiteShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const navigationToggle = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        navigationToggle.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <a
@@ -45,6 +57,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               <Link
                 key={to}
                 href={to}
+                aria-current={router.pathname === to ? "page" : undefined}
                 className={
                   router.pathname === to
                     ? "text-xs font-bold uppercase tracking-[.12em] text-accent transition-colors hover:text-accent"
@@ -63,21 +76,29 @@ export function SiteShell({ children }: { children: ReactNode }) {
             </Button>
           </div>
           <Button
+            ref={navigationToggle}
             variant="ghost"
             size="icon"
             className="lg:hidden"
             onClick={() => setOpen(!open)}
             aria-label="Toggle navigation"
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
           >
             {open ? <X /> : <Menu />}
           </Button>
         </div>
         {open && (
-          <nav className="border-t border-border bg-background px-5 py-5 lg:hidden">
+          <nav
+            id="mobile-navigation"
+            aria-label="Mobile navigation"
+            className="border-t border-border bg-background px-5 py-5 lg:hidden"
+          >
             {nav.map(([to, label]) => (
               <Link
                 key={to}
                 href={to}
+                aria-current={router.pathname === to ? "page" : undefined}
                 onClick={() => setOpen(false)}
                 className="block border-b border-border py-3 text-sm font-bold uppercase tracking-[.12em]"
               >
