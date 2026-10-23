@@ -48,6 +48,32 @@ jobs:
           for route in / /products /services /about /projects /fleet /contact /quote /privacy /terms; do
             curl --fail --silent "http://localhost:3000$route" > /dev/null
           done
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Install Chromium and Firefox
+        run: npx playwright install --with-deps chromium firefox
+      - name: Build and run browser journeys
+        run: npm run test:e2e
+      - name: Save browser report and failure diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-reports
+          path: |
+            playwright-report/
+            test-results/playwright/
+            test-results/playwright.xml
+          if-no-files-found: ignore
+          retention-days: 7
   container:
     runs-on: ubuntu-latest
     timeout-minutes: 20
