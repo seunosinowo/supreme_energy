@@ -8,6 +8,8 @@ import {
   ChevronRight,
   Gauge,
   MapPin,
+  Pause,
+  Play,
   ShieldCheck,
   Truck,
 } from "lucide-react";
@@ -68,12 +70,26 @@ export default function Home() {
   const fleet = images.fleetRoad;
   const gantry = images.loadingGantry;
   const [slide, setSlide] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const total = heroSlides.length;
 
   useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(preference.matches);
+    update();
+    preference.addEventListener("change", update);
+    return () => preference.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (paused || hovered || focused || reducedMotion) return;
     const t = setInterval(() => setSlide((s) => (s + 1) % total), 6000);
     return () => clearInterval(t);
-  }, [total]);
+  }, [total, paused, hovered, focused, reducedMotion]);
 
   const prev = () => setSlide((s) => (s - 1 + total) % total);
   const next = () => setSlide((s) => (s + 1) % total);
@@ -96,6 +112,12 @@ export default function Home() {
         className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-primary text-primary-foreground"
         aria-roledescription="carousel"
         aria-label="Supreme Energy hero slideshow"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
+        }}
       >
         <div className="absolute inset-0">
           {heroSlides.map((s, i) => (
@@ -151,7 +173,7 @@ export default function Home() {
                   </p>
                   <div className="flex w-full flex-wrap gap-3 sm:justify-center lg:justify-start">
                     <Button asChild size="lg" variant="flame">
-                      <Link href={s.cta.href}>
+                      <Link href={s.cta.href} tabIndex={i === slide ? 0 : -1}>
                         {s.cta.label} <ArrowRight />
                       </Link>
                     </Button>
@@ -185,13 +207,22 @@ export default function Home() {
                 <ChevronRight className="size-5" />
               </Button>
             </div>
-            <div className="flex items-center gap-2" role="tablist" aria-label="Slides">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setPaused((value) => !value)}
+              aria-label={paused ? "Resume slideshow" : "Pause slideshow"}
+              aria-pressed={paused}
+            >
+              {paused ? <Play /> : <Pause />}
+            </Button>
+            <div className="flex items-center gap-2" role="group" aria-label="Slide selection">
               {heroSlides.map((_, i) => (
                 <button
                   key={i}
                   type="button"
-                  role="tab"
-                  aria-selected={i === slide}
+                  aria-pressed={i === slide}
                   aria-label={`Go to slide ${i + 1}`}
                   onClick={() => setSlide(i)}
                   className={`h-2 rounded-full transition-all duration-300 ${
