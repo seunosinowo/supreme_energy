@@ -22,6 +22,16 @@ jobs:
         run: npm run typecheck
       - name: Test with coverage thresholds
         run: npm run test:coverage
+      - name: Save test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports
+          path: |
+            test-results/
+            coverage/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Build standalone production server
         run: npm run build
       - name: Audit dependency security

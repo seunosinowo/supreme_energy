@@ -28,4 +28,5 @@ out
 # Environment
 .env*
 coverage/
+test-results/
 *.tsbuildinfo
