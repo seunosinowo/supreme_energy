@@ -275,14 +275,3 @@ Open [http://localhost:3000](http://localhost:3000). The container includes a
 health check. Private environment files, Git history and local build artifacts
 are excluded from the build context. No external database or email service is
 required. Dependency installation still requires access to the npm registry.
-
----
-
-## License & Contact
-
-Company website — © Supreme Energy.
-
-- Head office: 45, Imam Dauda Street, Off Eric Moore Road, Surulere, Lagos
-- Phone / WhatsApp: +234 902 487 6164
-- E-mail: info@supreme-energy.com.ng
-- RC: 7982142
